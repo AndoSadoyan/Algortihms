@@ -1,0 +1,66 @@
+// Divide and Conquer solution (O(nlogn))
+// with indexes
+std::vector<int> MCS(std::vector<int>& arr, int start, int mid, int end)
+{
+	int leftsum = 0;
+	int leftmax=INT_MIN;
+	int leftindex = mid;
+	for (int i=mid; i >= start; --i)
+	{
+		leftsum += arr[i];
+		if (leftsum > leftmax)
+		{
+			leftindex = i;
+			leftmax = leftsum;
+		}
+	}
+	int rightsum = 0;
+	int rightmax = INT_MIN;
+	int rightindex = mid + 1;
+	for (int i = mid + 1; i <= end; ++i)
+	{
+		rightsum += arr[i];
+		if (rightsum > rightmax)
+		{
+			rightmax = rightsum;
+			rightindex = i;
+		}
+	}
+	return { leftindex,rightindex,rightmax + leftmax };
+}
+
+std::vector<int> MS(std::vector<int>& arr, int start, int end)
+{
+	if (start == end)
+		return { start,end,arr[start] };
+	int mid = start + (end - start) / 2;
+	std::vector<int> right = MS(arr, start, mid);
+	std::vector<int> left = MS(arr, mid + 1, end);
+	std::vector<int> cross = MCS(arr, start, mid, end);
+	if (left[2] >= right[2] && left[2] >= cross[2])
+		return left;
+	else if (right[2] >= left[2] && right[2] >= cross[2])
+		return right;
+	else
+		return cross;
+}
+
+
+//O(n) solution
+//without indexes
+template <typename T>
+T MaxSubSum(std::vector<T>& arr)
+{
+	int size = arr.size();
+	T cursum = 0;
+	T maxsum = arr[0];
+	for (int i = 0; i < size; ++i)
+	{
+		cursum += arr[i];
+		if (cursum > maxsum)
+			maxsum = cursum;
+		if (cursum < 0)
+			cursum = 0;
+	}
+	return maxsum;
+}

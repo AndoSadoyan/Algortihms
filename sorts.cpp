@@ -54,6 +54,7 @@ void BS(std::vector<int>& arr)
 }
 
 
+////// MergeSort
 void merge(std::vector<int>& nums, int begin, int mid, int end)
 {
 	int leftsize = mid - begin + 1;
@@ -104,3 +105,78 @@ void mergesort(std::vector<int>& nums, int begin, int end)
 	mergesort(nums, mid + 1, end);
 	merge(nums, begin, mid, end);
 }
+
+
+//////QucikSort
+void setMedian(std::vector<int>& arr,int first, int last)
+{
+	    int mid = first + (last - first) / 2;
+    if (arr[first] > arr[mid])
+        std::swap(arr[first], arr[mid]);
+    if (arr[mid] > arr[last])
+        std::swap(arr[mid], arr[last]);
+    if (arr[first] > arr[mid])
+        std::swap(arr[first], arr[mid]);
+    std::swap(arr[mid], arr[last - 1]);
+}
+
+int partition(std::vector<int>& arr ,int first,int last)
+{
+    setMedian(arr, first, last);
+    int pivot = arr[last - 1];
+    int leftIndex = first+1;
+    int rightIndex = last - 2;
+    while (true)
+    {
+        while (arr[leftIndex] < pivot)
+            ++leftIndex;
+        while (arr[rightIndex] > pivot)
+            --rightIndex;
+        if (leftIndex >= rightIndex)
+            break;
+        std::swap(arr[leftIndex++], arr[rightIndex--]);
+    }
+    std::swap(arr[leftIndex], arr[last - 1]);
+    return leftIndex;
+}
+
+void quickSort(std::vector<int>& arr, int first, int last)
+{
+    if (first < last)
+    {
+        if (last - first + 1 <= 3)
+        {
+            std::sort(arr.begin() + first, arr.begin() + last + 1);
+        }
+        else
+        {
+            int pivotIndex = partition(arr, first, last);
+            quickSort(arr, first, pivotIndex - 1);
+            qucikSort(arr, pivotIndex + 1, last);
+        }
+    }
+}
+
+///// CountSort
+void countsort(std::vector<int>& arr)
+{
+    int minElem = min(arr);
+    int maxElem = max(arr);
+    int countSize = maxElem - minElem + 1;
+    std::vector<int> count(countSize, 0);
+    for (int i = 0; i < arr.size(); ++i)
+	++count[arr[i]-minElem];
+    for (int i = 1; i < countSize; ++i)
+    {
+        count[i] += count[i - 1];
+    }
+    std::vector<int> outArr(arr.size());
+    for (int i = arr.size()-1; i >= 0; --i)
+    {
+        outArr[count[arr[i]-minElem] - 1] = arr[i];
+        --count[arr[i] - minElem];
+    }
+    arr = std::move(outArr);
+}
+
+
